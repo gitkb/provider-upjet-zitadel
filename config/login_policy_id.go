@@ -17,6 +17,7 @@ import (
 	"time"
 
 	ujconfig "github.com/crossplane/upjet/v2/pkg/config"
+	ujterraform "github.com/crossplane/upjet/v2/pkg/terraform"
 )
 
 // loginPolicyExternalName resolves the organization's singleton ID before the
@@ -31,7 +32,15 @@ var loginPolicyExternalName = ujconfig.NewExternalNameFrom(ujconfig.IdentifierFr
 		if org, ok := parameters["org_id"].(string); ok && org != "" {
 			return org, nil
 		}
-		configuration, _ := setup["configuration"].(map[string]any)
+		// Setup.Map preserves the named ProviderConfiguration map. Decoded test
+		// input may also be an ordinary map, so support both representations.
+		var configuration map[string]any
+		switch value := setup["configuration"].(type) {
+		case ujterraform.ProviderConfiguration:
+			configuration = map[string]any(value)
+		case map[string]any:
+			configuration = value
+		}
 		token, ok := configuration["access_token"].(string)
 		if !ok || token == "" {
 			return parent(ctx, externalName, parameters, setup)

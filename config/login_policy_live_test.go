@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"os"
 	"testing"
+
+	ujterraform "github.com/crossplane/upjet/v2/pkg/terraform"
 )
 
 // TestLiveLoginPolicyOrganization is opt-in and reads credentials from stdin.
@@ -25,7 +27,7 @@ func TestLiveLoginPolicyOrganization(t *testing.T) {
 		t.Fatal("invalid test input")
 	}
 	params := map[string]any{}
-	id, err := loginPolicyExternalName.GetIDFn(context.Background(), "", params, map[string]any{"configuration": input.Configuration})
+	id, err := loginPolicyExternalName.GetIDFn(context.Background(), "", params, (ujterraform.Setup{Configuration: ujterraform.ProviderConfiguration(input.Configuration)}).Map())
 	if err != nil {
 		t.Fatal(err)
 	}
