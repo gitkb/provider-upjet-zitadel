@@ -287,5 +287,5 @@ vendor.check: modules.check
 # Isolated API-server test for concurrent preview cleanup. Does not use kubeconfig.
 .PHONY: test-preview-cleanup
 test-preview-cleanup:
-	@assets=$$(go run sigs.k8s.io/controller-runtime/tools/setup-envtest@v0.0.0-20250308055145-5fe7bb3edc86 use 1.32.0 -p path); \
+	@set -eu; assets=$$(go run sigs.k8s.io/controller-runtime/tools/setup-envtest@v0.0.0-20250308055145-5fe7bb3edc86 use 1.32.0 -p path); \
 	KUBEBUILDER_ASSETS="$$assets" go test -tags=integration ./internal/controller/namespaced/providerconfig -run TestPreviewCleanupWithAPIServer -count=1 -v

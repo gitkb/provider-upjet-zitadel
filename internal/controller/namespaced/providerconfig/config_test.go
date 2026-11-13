@@ -60,7 +60,9 @@ func TestPreviewProviderConfigLifecycle(t *testing.T) {
 	foreign := usage("preview-b", "foreign", "ProviderConfig")
 	clusterA := usage("preview-a", "cluster-a", "ClusterProviderConfig")
 	clusterB := usage("preview-b", "cluster-b", "ClusterProviderConfig")
-	objects := append(configs, local, foreign, clusterA, clusterB)
+	objects := make([]client.Object, 0, len(configs)+4)
+	objects = append(objects, configs...)
+	objects = append(objects, local, foreign, clusterA, clusterB)
 	kube := fake.NewClientBuilder().WithScheme(scheme).
 		WithStatusSubresource(&v1beta1.ProviderConfig{}, &v1beta1.ClusterProviderConfig{}).
 		WithObjects(objects...).Build()
