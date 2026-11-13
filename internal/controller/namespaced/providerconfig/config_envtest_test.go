@@ -34,7 +34,11 @@ import (
 // Exercise real API finalizers and watch-driven reconciliation without an
 // external Zitadel instance or access to the developer's Kubernetes context.
 func TestPreviewCleanupWithAPIServer(t *testing.T) {
-	env := &envtest.Environment{ErrorIfCRDPathMissing: true}
+	// Prove ambient envtest settings cannot redirect this test to kubeconfig.
+	t.Setenv("USE_EXISTING_CLUSTER", "true")
+	t.Setenv("KUBECONFIG", filepath.Join(t.TempDir(), "unused-kubeconfig"))
+	useExistingCluster := false
+	env := &envtest.Environment{ErrorIfCRDPathMissing: true, UseExistingCluster: &useExistingCluster}
 	for _, name := range []string{"providerconfigs", "clusterproviderconfigs", "providerconfigusages"} {
 		env.CRDDirectoryPaths = append(env.CRDDirectoryPaths, filepath.Join("..", "..", "..", "..", "package", "crds", "zitadel.m.crossplane.io_"+name+".yaml"))
 	}
