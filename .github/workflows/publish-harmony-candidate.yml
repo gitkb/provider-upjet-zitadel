@@ -1,0 +1,23 @@
+name: Publish Harmony preview cleanup candidate
+on:
+  push:
+    branches: [preview-namespace-accounting]
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: preview-cleanup-candidate-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  publish:
+    if: github.repository == 'gitkb/provider-upjet-zitadel'
+    uses: crossplane-contrib/provider-workflows/.github/workflows/publish-provider.yml@451c4dc6ad3691b0a702a997a0ac24e8bbc8bbaa
+    with:
+      repository: provider-upjet-zitadel
+      registry_org: gitkb
+      mirror: false
+      version: v0.3.0-harmony-cleanup.${{ github.run_number }}.${{ github.run_attempt }}
+      go-version: '1.26.2'
+      cleanup-disk: true
+    secrets:
+      GHCR_PAT: ${{ secrets.GITHUB_TOKEN }}
